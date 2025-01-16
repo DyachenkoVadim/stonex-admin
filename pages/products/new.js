@@ -9,5 +9,3 @@ export default function NewProduct() {
     </Layout>
   );
 }
-
-//1:15:41
