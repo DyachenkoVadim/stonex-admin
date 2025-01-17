@@ -7,6 +7,7 @@ export default function ProductForm({
   title: existingTitle,
   description: existingDescription,
   price: existingPrice,
+  images,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDescription || "");
@@ -27,6 +28,21 @@ export default function ProductForm({
     setGoToProducts(true);
   };
 
+  const uploadImages = async (ev) => {
+    const files = ev.target?.files;
+    if (files?.length > 0) {
+      const data = new FormData();
+      for (const file of files) {
+        data.append("file", file);
+      }
+      await fetch("/api/upload", {
+        method: "POST",
+        body: data,
+      });
+      console.log(res.data);
+    }
+  };
+
   if (goToProducts) router.push("/products");
 
   return (
@@ -38,6 +54,28 @@ export default function ProductForm({
         value={title}
         onChange={(ev) => setTitle(ev.target.value)}
       ></input>
+      <label>Photos</label>
+      <div className="mb-2">
+        <label className="w-24 h-24 border flex items-center flex-col justify-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200 cursor-pointer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+            />
+          </svg>
+          <div>Upload</div>
+          <input className="hidden" type="file" onChange={uploadImages} />
+        </label>
+        {!images?.length && <div>No photos in this product</div>}
+      </div>
       <label>Description</label>
       <textarea
         placeholder="description"
