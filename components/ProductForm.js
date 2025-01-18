@@ -1,23 +1,26 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Spinner from "./Spinner";
 
 export default function ProductForm({
   _id,
   title: existingTitle,
   description: existingDescription,
   price: existingPrice,
-  images,
+  images: existingimages,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDescription || "");
   const [price, setPrice] = useState(existingPrice || "");
   const [goToProducts, setGoToProducts] = useState(false);
+  const [images, setImages] = useState(existingimages || []);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  console.log(_id);
+
   const saveProduct = async (ev) => {
     ev.preventDefault();
-    const data = { title, description, price };
+    const data = { title, description, price, images };
     if (_id) {
       //update
       await axios.put("/api/products", { ...data, _id });
@@ -29,18 +32,19 @@ export default function ProductForm({
   };
 
   const uploadImages = async (ev) => {
+    setLoading(true);
     const files = ev.target?.files;
     if (files?.length > 0) {
       const data = new FormData();
       for (const file of files) {
         data.append("file", file);
       }
-      await fetch("/api/upload", {
-        method: "POST",
-        body: data,
+      const res = await axios.post("/api/upload", data);
+      setImages((oldImages) => {
+        return [...oldImages, ...res.data.links];
       });
-      console.log(res.data);
     }
+    setLoading(false);
   };
 
   if (goToProducts) router.push("/products");
@@ -55,7 +59,18 @@ export default function ProductForm({
         onChange={(ev) => setTitle(ev.target.value)}
       ></input>
       <label>Photos</label>
-      <div className="mb-2">
+      <div className="mb-2 flex flex-wrap gap-2">
+        {!!images?.length &&
+          images.map((link) => (
+            <div key={link} className="h-24">
+              <img src={link} className="rounded-md" />
+            </div>
+          ))}
+        {loading && (
+          <div className="h-24 p-1 flex items-center">
+            <Spinner />
+          </div>
+        )}
         <label className="w-24 h-24 border flex items-center flex-col justify-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200 cursor-pointer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -72,9 +87,9 @@ export default function ProductForm({
             />
           </svg>
           <div>Upload</div>
+
           <input className="hidden" type="file" onChange={uploadImages} />
         </label>
-        {!images?.length && <div>No photos in this product</div>}
       </div>
       <label>Description</label>
       <textarea
@@ -95,3 +110,5 @@ export default function ProductForm({
     </form>
   );
 }
+
+//2:57:25
