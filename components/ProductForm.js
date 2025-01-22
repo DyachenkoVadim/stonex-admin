@@ -62,6 +62,7 @@ export default function ProductForm({
         placeholder="product name"
         value={title}
         onChange={(ev) => setTitle(ev.target.value)}
+        className="mb-2"
       ></input>
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-2">
@@ -104,12 +105,14 @@ export default function ProductForm({
       </div>
       <label>Description</label>
       <textarea
+        className="mb-2"
         placeholder="description"
         value={description}
         onChange={(ev) => setDescription(ev.target.value)}
       />
       <label>Price (in USD)</label>
       <input
+        className="mb-2"
         type="number"
         placeholder="price"
         value={price}
