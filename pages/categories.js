@@ -72,24 +72,30 @@ function Categories({ swal }) {
           ? `Edit category ${editedCategory.name}`
           : "New category name"}
       </label>
-      <form onSubmit={saveCategory} className="flex gap-1">
-        <input
-          className="mb-0"
-          type="text"
-          placeholder="Category name"
-          value={name}
-          onChange={(ev) => setName(ev.target.value)}
-        />
-        <select
-          value={parentCategory}
-          onChange={(ev) => setParentCategory(ev.target.value)}
-        >
-          <option value={undefined}>No parent category</option>
-          {categories.length > 0 &&
-            categories.map((category) => (
-              <option value={category._id}>{category.name}</option>
-            ))}
-        </select>
+      <form onSubmit={saveCategory}>
+        <div className="flex gap-1 mb-2">
+          <input
+            className="mb-0"
+            type="text"
+            placeholder="Category name"
+            value={name}
+            onChange={(ev) => setName(ev.target.value)}
+          />
+          <select
+            value={parentCategory}
+            onChange={(ev) => setParentCategory(ev.target.value)}
+          >
+            <option value={undefined}>No parent category</option>
+            {categories.length > 0 &&
+              categories.map((category) => (
+                <option value={category._id}>{category.name}</option>
+              ))}
+          </select>
+        </div>
+        <div>
+          <label>Properties</label>
+          <button className="btn-secondary">Add new property</button>
+        </div>
         <button type="submit" className="btn-primary py-1">
           Save
         </button>
@@ -161,4 +167,4 @@ function Categories({ swal }) {
 
 export default withSwal(({ swal }, ref) => <Categories swal={swal} />);
 
-//3:32:48
+//4:17:02
