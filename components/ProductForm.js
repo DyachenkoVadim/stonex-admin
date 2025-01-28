@@ -11,11 +11,15 @@ export default function ProductForm({
   price: existingPrice,
   images: existingimages,
   category: existingCategory,
+  properties: existingProperties,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDescription || "");
   const [price, setPrice] = useState(existingPrice || "");
   const [category, setCategory] = useState(existingCategory || "");
+  const [productProperties, setProductProperties] = useState(
+    existingProperties || {}
+  );
   const [goToProducts, setGoToProducts] = useState(false);
   const [images, setImages] = useState(existingimages || []);
   const [loading, setLoading] = useState(false);
@@ -29,7 +33,14 @@ export default function ProductForm({
 
   const saveProduct = async (ev) => {
     ev.preventDefault();
-    const data = { title, description, price, images, category };
+    const data = {
+      title,
+      description,
+      price,
+      images,
+      category,
+      properties: productProperties,
+    };
     if (_id) {
       //update
       await axios.put("/api/products", { ...data, _id });
@@ -62,6 +73,28 @@ export default function ProductForm({
 
   if (goToProducts) router.push("/products");
 
+  const propertiesToFill = [];
+  if (categories.length > 0 && category) {
+    let categoryInfo = categories.find(({ _id }) => _id === category);
+    console.log({ categoryInfo });
+    propertiesToFill.push(...categoryInfo.properties);
+    while (categoryInfo?.parent?._id) {
+      const parentCategory = categories.find(
+        ({ _id }) => _id === categoryInfo?.parent?._id
+      );
+      propertiesToFill.push(...parentCategory.properties);
+      categoryInfo = parentCategory;
+    }
+  }
+
+  const setProductProp = (propName, value) => {
+    setProductProperties((prev) => {
+      const newProductProps = { ...prev };
+      newProductProps[propName] = value;
+      return newProductProps;
+    });
+  };
+
   return (
     <form onSubmit={saveProduct}>
       <label>Product name</label>
@@ -82,6 +115,21 @@ export default function ProductForm({
         {categories.length > 0 &&
           categories.map((c) => <option value={c._id}>{c.name}</option>)}
       </select>
+      {propertiesToFill.length > 0 &&
+        propertiesToFill.map((p) => (
+          <div className="flex gap-1">
+            <div>{p.name}</div>
+            <select
+              value={productProperties[p.name]}
+              onChange={(ev) => setProductProp(p.name, ev.target.value)}
+            >
+              <option value={""}></option>
+              {p.values.map((v) => (
+                <option value={v}>{v}</option>
+              ))}
+            </select>
+          </div>
+        ))}
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-2">
         <ReactSortable
@@ -143,4 +191,4 @@ export default function ProductForm({
   );
 }
 
-//3:03:44
+//5:15:55
