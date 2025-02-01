@@ -1,35 +1,39 @@
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Logo from "./Logo";
+import { useRef } from "react";
+import useClickOutside from "@/hooks/useClickOutside";
 
-export default function Nav() {
+export default function Nav({ show, setShow }) {
   const inactiveLink = "flex gap-1 p-1";
-  const activeLink = inactiveLink + " bg-white text-blue-900 rounded-l-lg";
+  const activeLink = inactiveLink + " bg-highlight text-black rounded-md";
+  const inactiveIcon = "size-6";
+  const activeIcon = inactiveIcon + " text-primary";
+  const asideRef = useRef(null);
   const router = useRouter();
   const { pathname } = router;
   const logout = async () => {
     await router.push("/");
     await signOut();
   };
+
+  useClickOutside(asideRef, () => {
+    setShow(false);
+  });
+
   return (
-    <aside className="text-white p-4 pr-0">
-      <Link href={"/"} className="flex gap-1 mb-4 mr-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"
-          />
-        </svg>
-        <span className="">StoneXAdmin</span>
-      </Link>
+    <aside
+      ref={asideRef}
+      className={
+        (show ? "left-0" : "-left-full") +
+        " text-gray-500 p-4 fixed w-10/12 bg-bgGray h-screen top-0 md:static md:w-auto transition-all shadow-lg "
+      }
+    >
+      <div className="mb-4 mr-4">
+        {" "}
+        <Logo />
+      </div>
 
       <nav className="flex flex-col gap-2 ">
         <Link
@@ -42,7 +46,7 @@ export default function Nav() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className={pathname === "/" ? activeIcon : inactiveIcon}
           >
             <path
               strokeLinecap="round"
@@ -62,7 +66,7 @@ export default function Nav() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className={pathname === "/orders" ? activeIcon : inactiveIcon}
           >
             <path
               strokeLinecap="round"
@@ -83,7 +87,7 @@ export default function Nav() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className={pathname === "/products" ? activeIcon : inactiveIcon}
           >
             <path
               strokeLinecap="round"
@@ -106,7 +110,7 @@ export default function Nav() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className={pathname === "/categories" ? activeIcon : inactiveIcon}
           >
             <path
               strokeLinecap="round"
@@ -127,7 +131,7 @@ export default function Nav() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className={pathname === "/settings" ? activeIcon : inactiveIcon}
           >
             <path
               strokeLinecap="round"
