@@ -1,11 +1,13 @@
 import { Product } from "@/models/Product";
 import { mongooseConnect } from "@/lib/mongoose";
 import { isAdminRequest } from "@/pages/api/auth/[...nextauth]";
+import cors, { runMiddleware } from "@/lib/init-middleware";
 
 export default async function handle(req, res) {
   const { method } = req;
   await mongooseConnect();
-  await isAdminRequest(req, res);
+
+  await runMiddleware(req, res, cors);
 
   if (method === "GET") {
     if (req.query?.id) {
@@ -14,6 +16,8 @@ export default async function handle(req, res) {
       res.json(await Product.find());
     }
   }
+
+  await isAdminRequest(req, res);
 
   if (method === "POST") {
     const { title, description, price, images, category, properties } =

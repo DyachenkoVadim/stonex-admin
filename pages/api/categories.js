@@ -1,13 +1,22 @@
 import { Category } from "@/models/Category";
 import { mongooseConnect } from "@/lib/mongoose";
 import { isAdminRequest } from "./auth/[...nextauth]";
+import cors, { runMiddleware } from "@/lib/init-middleware";
 
 export default async function handle(req, res) {
   const { method } = req;
+
+  // Підключення до бази даних
   await mongooseConnect();
-  await isAdminRequest(req, res);
+  await runMiddleware(req, res, cors);
+
+  // Перевірка прав доступу тільки для методів, які змінюють дані
+  if (method === "POST" || method === "PUT" || method === "DELETE") {
+    await isAdminRequest(req, res);
+  }
 
   if (method === "GET") {
+    // Публічний доступ до списку категорій
     res.json(await Category.find().populate("parent"));
   }
 
@@ -40,5 +49,3 @@ export default async function handle(req, res) {
     res.json("ok");
   }
 }
-
-//3:59:54
