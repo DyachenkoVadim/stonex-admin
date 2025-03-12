@@ -2,58 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-  @apply bg-bgGray
+body {
+	@apply bg-bgGray;
 }
 
-img{
-  max-height: 100%;
+img {
+	max-height: 100%;
 }
 
-input, textarea, select{
-  @apply border border-gray-200 rounded-md w-full resize-none py-2 px-3 
+input,
+textarea,
+select {
+	@apply border border-gray-200 rounded-md w-full resize-none py-2 px-3;
 }
 
-input:focus, textarea:focus, select:focus{
-  @apply border-primary
+input:focus,
+textarea:focus,
+select:focus {
+	@apply border-primary;
 }
 
-h1{
-  @apply text-primary mb-2 text-xl
+h1 {
+	@apply text-primary mb-2 text-xl;
 }
 
-label{
-  @apply text-gray-600 text-sm
+label {
+	@apply text-gray-600 text-sm;
 }
 
-.btn-primary{
-  @apply bg-primary text-white px-4 py-1 rounded-md
+.btn-primary {
+	@apply bg-primary text-white px-4 py-1 rounded-md;
 }
 
-table.basic{
-  @apply w-full bg-white rounded-md shadow-md
+table.basic {
+	@apply w-full bg-white rounded-md shadow-md;
 }
 
-table.basic thead tr td{
-  @apply text-sm text-gray-500 uppercase border-b border-b-gray-200 px-4 py-2;
+table.basic thead tr td,
+table.basic thead tr th {
+	@apply text-sm text-gray-500 uppercase border-b border-b-gray-200 px-4 py-2;
 }
 
-table.basic tr td{
-  @apply px-4 py-1
+table.basic tr td {
+	@apply px-4 py-1;
 }
 
-table.basic a{
-  @apply text-sm py-1 px-2 mx-1 rounded-md inline-flex gap-1
+table.basic a {
+	@apply text-sm py-1 px-2 mx-1 rounded-md inline-flex gap-1;
 }
 
-.btn-red, .btn-default{
-  @apply px-4 py-1 rounded-md 
+.btn-red,
+.btn-default {
+	@apply px-4 py-1 rounded-md;
 }
 
-.btn-red{
- @apply bg-red-200 text-red-800 px-4 py-1 rounded-md
+.btn-red {
+	@apply bg-red-200 text-red-800 px-4 py-1 rounded-md;
 }
 
-.btn-default{
-  @apply bg-gray-600 text-white px-4 py-1 rounded-md 
+.btn-default {
+	@apply bg-gray-600 text-white px-4 py-1 rounded-md;
 }
