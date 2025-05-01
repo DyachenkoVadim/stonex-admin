@@ -1,36 +1,40 @@
 {
-  "name": "stonex-admin",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@auth/mongodb-adapter": "^3.7.4",
-    "@aws-sdk/client-s3": "^3.731.1",
-    "axios": "^1.7.9",
-    "cors": "^2.8.5",
-    "mime-types": "^2.1.35",
-    "mongodb": "^6.12.0",
-    "mongoose": "^8.9.5",
-    "multiparty": "^4.2.3",
-    "next": "15.1.4",
-    "next-auth": "^4.24.11",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-sortablejs": "^6.1.4",
-    "react-spinners": "^0.15.0",
-    "react-sweetalert2": "^0.6.0",
-    "sortablejs": "^1.15.6"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.4",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1"
-  }
+	"name": "stonex-admin",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@auth/mongodb-adapter": "*",
+		"@aws-sdk/client-s3": "*",
+		"@tailwindcss/postcss": "^4.1.5",
+		"axios": "*",
+		"chart.js": "*",
+		"cors": "*",
+		"faker": "^6.6.6",
+		"mime-types": "*",
+		"mongodb": "*",
+		"mongoose": "*",
+		"multiparty": "*",
+		"next": "*",
+		"next-auth": "*",
+		"react": "*",
+		"react-chartjs-2": "*",
+		"react-dom": "*",
+		"react-sortablejs": "*",
+		"react-spinners": "*",
+		"react-sweetalert2": "*",
+		"sortablejs": "*"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "*",
+		"eslint": "*",
+		"eslint-config-next": "*",
+		"postcss": "^8.5.3",
+		"tailwindcss": "^3.4.17"
+	}
 }

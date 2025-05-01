@@ -7,6 +7,7 @@ export default function OrdersPage() {
 	useEffect(() => {
 		axios.get("/api/orders").then((response) => {
 			setOrders(response.data);
+			axios.patch("/api/orders");
 		});
 	}, []);
 	return (
