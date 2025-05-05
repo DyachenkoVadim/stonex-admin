@@ -1,5 +1,4 @@
-import React, { MouseEvent, useRef } from "react";
-import { InteractionItem } from "chart.js";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	Chart as ChartJS,
 	LinearScale,
@@ -16,6 +15,7 @@ import {
 	getElementAtEvent,
 	getElementsAtEvent,
 } from "react-chartjs-2";
+import axios from "axios";
 
 ChartJS.register(
 	LinearScale,
@@ -27,71 +27,54 @@ ChartJS.register(
 	Tooltip
 );
 
-const labels = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
-];
-
-export const data = {
-	labels,
-	datasets: [
-		{
-			type: "line",
-			label: "Dataset 1",
-			borderColor: "rgb(255, 99, 132)",
-			borderWidth: 2,
-			fill: false,
-			data: labels.map(() => {}),
-		},
-	],
-};
-
 export default function ProfitChart() {
-	const printDatasetAtEvent = (dataset) => {
-		if (!dataset.length) return;
+	const [labels, setLabels] = useState([]);
+	const [profits, setProfits] = useState([]);
 
-		const datasetIndex = dataset[0].datasetIndex;
+	useEffect(() => {
+		axios.get("/api/stats/profit").then((res) => {
+			const data = res.data;
+			console.log(data);
+			const keys = Object.keys(data); // вже в правильному порядку
+			setLabels(
+				keys.map((key) => {
+					const [year, month] = key.split("-");
+					return new Date(+year, +month - 1).toLocaleString("default", {
+						month: "short",
+						year: "numeric",
+					});
+				})
+			);
+			setProfits(keys.map((key) => data[key]));
+		});
+	}, []);
 
-		console.log(data.datasets[datasetIndex].label);
-	};
-
-	const printElementAtEvent = (element) => {
-		if (!element.length) return;
-
-		const { datasetIndex, index } = element[0];
-
-		console.log(data.labels[index], data.datasets[datasetIndex].data[index]);
-	};
-
-	const printElementsAtEvent = (elements) => {
-		if (!elements.length) return;
-
-		console.log(elements.length);
+	const chartData = {
+		labels,
+		datasets: [
+			{
+				type: "line",
+				label: "Monthly Profit ($)",
+				borderColor: "rgb(75, 192, 192)",
+				borderWidth: 2,
+				fill: false,
+				data: profits,
+			},
+		],
 	};
 
 	const chartRef = useRef(null);
 
 	const onClick = (event) => {
-		const { current: chart } = chartRef;
+		const chart = chartRef.current;
+		if (!chart) return;
 
-		if (!chart) {
-			return;
+		const element = getElementAtEvent(chart, event);
+		if (element.length) {
+			const { index } = element[0];
+			console.log(`Clicked ${labels[index]}: $${profits[index]}`);
 		}
-
-		printDatasetAtEvent(getDatasetAtEvent(chart, event));
-		printElementAtEvent(getElementAtEvent(chart, event));
-		printElementsAtEvent(getElementsAtEvent(chart, event));
 	};
 
-	return <Chart ref={chartRef} type="bar" onClick={onClick} data={data} />;
+	return <Chart ref={chartRef} type="bar" onClick={onClick} data={chartData} />;
 }

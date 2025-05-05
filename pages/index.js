@@ -66,7 +66,7 @@ export default function Home() {
 					className="text-green-700">
 					{stats.totalProducts}
 				</StatsCard>
-				<StatsCard>
+				<StatsCard className="col-span-1 md:col-span-2">
 					<ProfitChart />
 				</StatsCard>
 			</div>
