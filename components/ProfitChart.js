@@ -9,12 +9,7 @@ import {
 	Legend,
 	Tooltip,
 } from "chart.js";
-import {
-	Chart,
-	getDatasetAtEvent,
-	getElementAtEvent,
-	getElementsAtEvent,
-} from "react-chartjs-2";
+import { Chart, getElementAtEvent } from "react-chartjs-2";
 import axios from "axios";
 
 ChartJS.register(
@@ -30,22 +25,25 @@ ChartJS.register(
 export default function ProfitChart() {
 	const [labels, setLabels] = useState([]);
 	const [profits, setProfits] = useState([]);
+	const [orders, setOrders] = useState([]);
 
 	useEffect(() => {
 		axios.get("/api/stats/profit").then((res) => {
-			const data = res.data;
-			console.log(data);
-			const keys = Object.keys(data); // вже в правильному порядку
+			const data = res.data.monthlyData;
+			const keys = Object.keys(data);
+
 			setLabels(
 				keys.map((key) => {
 					const [year, month] = key.split("-");
 					return new Date(+year, +month - 1).toLocaleString("default", {
-						month: "short",
+						month: "numeric",
 						year: "numeric",
 					});
 				})
 			);
-			setProfits(keys.map((key) => data[key]));
+
+			setProfits(keys.map((key) => data[key].profit));
+			setOrders(keys.map((key) => data[key].orders));
 		});
 	}, []);
 
@@ -55,12 +53,42 @@ export default function ProfitChart() {
 			{
 				type: "line",
 				label: "Monthly Profit ($)",
-				borderColor: "rgb(75, 192, 192)",
+				borderColor: "#5542F6",
 				borderWidth: 2,
 				fill: false,
 				data: profits,
+				tension: 0.3,
+				pointRadius: 5,
+				pointHoverRadius: 7,
 			},
 		],
+	};
+
+	const options = {
+		responsive: true,
+		plugins: {
+			tooltip: {
+				callbacks: {
+					label: function (context) {
+						const index = context.dataIndex;
+						const profit = profits[index] ?? 0;
+						const orderCount = orders[index] ?? 0;
+						return [`Profit: $${profit}`, `Orders: ${orderCount}`];
+					},
+				},
+			},
+			legend: {
+				display: true,
+			},
+		},
+		scales: {
+			y: {
+				beginAtZero: true,
+				ticks: {
+					callback: (value) => `$${value}`,
+				},
+			},
+		},
 	};
 
 	const chartRef = useRef(null);
@@ -71,10 +99,20 @@ export default function ProfitChart() {
 
 		const element = getElementAtEvent(chart, event);
 		if (element.length) {
-			const { index } = element[0];
-			console.log(`Clicked ${labels[index]}: $${profits[index]}`);
+			const index = element[0].index;
+			console.log(
+				`Clicked ${labels[index]}: $${profits[index]}, ${orders[index]} orders`
+			);
 		}
 	};
 
-	return <Chart ref={chartRef} type="bar" onClick={onClick} data={chartData} />;
+	return (
+		<Chart
+			ref={chartRef}
+			type="bar"
+			onClick={onClick}
+			data={chartData}
+			options={options}
+		/>
+	);
 }
