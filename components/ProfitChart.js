@@ -52,7 +52,7 @@ export default function ProfitChart() {
 		datasets: [
 			{
 				type: "line",
-				label: "Monthly Profit ($)",
+				label: "Щомісячний прибуток ($)",
 				borderColor: "#5542F6",
 				borderWidth: 2,
 				fill: false,
@@ -73,7 +73,7 @@ export default function ProfitChart() {
 						const index = context.dataIndex;
 						const profit = profits[index] ?? 0;
 						const orderCount = orders[index] ?? 0;
-						return [`Profit: $${profit}`, `Orders: ${orderCount}`];
+						return [`Прибуток: $${profit}`, `Замовлень: ${orderCount}`];
 					},
 				},
 			},

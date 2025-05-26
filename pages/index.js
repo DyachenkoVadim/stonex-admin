@@ -13,9 +13,10 @@ export default function Home() {
 	const { data: session } = useSession();
 	const [stats, setStats] = useState({
 		newOrders: 0,
-		lastEditedProduct: "—",
 		totalProducts: 0,
+		totalProfit: 0,
 	});
+
 	const [topProduct, setTopProduct] = useState({
 		title: "—",
 		count: 0,
@@ -37,8 +38,6 @@ export default function Home() {
 					axios.get("/api/stats/profit"),
 				]);
 
-				console.log(topProductRes);
-
 				setTopProduct(topProductRes.data.topProduct);
 
 				const products = productsRes.data;
@@ -46,14 +45,30 @@ export default function Home() {
 
 				const newOrders = orders.filter((order) => !order.viewed);
 
-				const sortedProducts = [...products].sort(
-					(a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-				);
+				// 🔽 Рахуємо лише оплачені замовлення
+				const paidOrders = orders.filter((order) => order.paid);
+
+				// 🔽 Обчислюємо сумарний прибуток
+				const totalProfit = paidOrders.reduce((sum, order) => {
+					const orderTotal = order.line_items.reduce((lineSum, item) => {
+						const quantity = item.quantity || 0;
+						const unitAmount = item.price_data?.unit_amount || 0;
+						return lineSum + quantity * unitAmount;
+					}, 0);
+					return sum + orderTotal;
+				}, 0);
+
+				// 🔽 Якщо потрібно — переводимо з копійок у долари
+				const totalProfitInDollars = new Intl.NumberFormat("uk-UA", {
+					style: "decimal",
+					minimumFractionDigits: 2,
+					maximumFractionDigits: 2,
+				}).format(totalProfit / 100);
 
 				setStats({
 					newOrders: newOrders.length,
-					lastEditedProduct: sortedProducts[0]?.title || "—",
 					totalProducts: products.length,
+					totalProfit: totalProfitInDollars,
 				});
 			} catch (error) {
 				console.error("Failed to load dashboard stats", error);
@@ -67,7 +82,7 @@ export default function Home() {
 		<Layout>
 			<div className="text-primary flex justify-between items-center">
 				<h2 className="2xl:text-2xl">
-					Hello, <b>{session?.user?.name}</b>
+					Вітаю, <b>{session?.user?.name}</b>
 				</h2>
 				<div className="flex bg-gray-300 text-black gap-1 items-center rounded-lg overflow-hidden">
 					<img
@@ -80,27 +95,27 @@ export default function Home() {
 			</div>
 
 			<div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-				<StatsCard label={"New orders"}>{stats.newOrders}</StatsCard>
+				<StatsCard label={"Нових замовлень"}>{stats.newOrders}</StatsCard>
 
 				<StatsCard
-					label={"Number of products"}
+					label={"Загальна кількість продуктів"}
 					color="greenPrimary"
 					className="text-greenPrimary">
 					{stats.totalProducts}
 				</StatsCard>
 
 				<StatsCard
-					label={"Last updated product"}
-					size="lg"
-					fontWeight={""}
-					className="col-span-1 md:col-span-2 lg:col-span-1">
-					{stats.lastEditedProduct}
+					label={"Сумарний прибуток"}
+					color="greenPrimary"
+					className="col-span-1 md:col-span-2 lg:col-span-1 text-primary">
+					${stats.totalProfit}
 				</StatsCard>
+
 				<StatsCard className="h-fit">
 					{topProduct.title !== "—" ? (
 						<div className="size-full">
 							<h3 className="text-gray-500 text-sm 2xl:text-md font-normal">
-								Top product this month
+								Топ продукт цього місяця
 							</h3>
 							<p className="text-center my-2 font-semibold">
 								{topProduct.title}
@@ -108,7 +123,7 @@ export default function Home() {
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-fit">
 								<div>
 									<h4 className="text-gray-400 text-sm font-normal mb-4">
-										Amount sold
+										Кількість продано
 									</h4>
 									<p
 										className={`my-1 ${
@@ -116,20 +131,22 @@ export default function Home() {
 												? "text-greenPrimary"
 												: "text-red-700"
 										}`}>
-										{topProduct.orders} orders
+										{topProduct.orders} замовлень
+										<br />
 										<span className="ml-2">
+											(
 											{topProduct.orderGrowth > 0 ? (
 												<FontAwesomeIcon icon={faArrowTrendUp} />
 											) : (
 												<FontAwesomeIcon icon={faArrowTrendDown} />
 											)}{" "}
-											{topProduct.orderGrowth}%
+											{topProduct.orderGrowth}%)
 										</span>
 									</p>
 								</div>
 								<div>
 									<h4 className="text-gray-400 text-sm font-normal mb-4">
-										Total profit
+										Заробіток з продажу
 									</h4>
 									<p
 										className={`my-1 ${
@@ -137,46 +154,46 @@ export default function Home() {
 												? "text-greenPrimary"
 												: "text-red-700"
 										}`}>
-										${topProduct.profit} profit
+										${topProduct.profit} прибутку <br />(
 										<span className="ml-2">
 											{topProduct.profitGrowth > 0 ? (
 												<FontAwesomeIcon icon={faArrowTrendUp} />
 											) : (
 												<FontAwesomeIcon icon={faArrowTrendDown} />
 											)}{" "}
-											{topProduct.profitGrowth}%
+											{topProduct.profitGrowth}%)
 										</span>
 									</p>
 								</div>
 								<div>
 									<h4 className="text-gray-400 text-sm font-normal">
-										Average rating
+										Середня оцінка
 									</h4>
-									<p className="my-1 text-center text-primary font-semibold text-lg">
+									<p className="my-1 text-center text-primary">
 										{topProduct.averageRating?.toFixed(1) || "—"} / 5
 									</p>
 								</div>
 								<div>
 									<h4 className="text-gray-400 text-sm font-normal">
-										Highest rating
+										Найвища оцінка
 									</h4>
-									<p className="my-1 text-center text-primary font-semibold text-lg">
+									<p className="my-1 text-center text-primary">
 										{topProduct.maxRating || "—"} ★
 									</p>
 								</div>
 								<div>
 									<h4 className="text-gray-400 text-sm font-normal">
-										Total ratings
+										Усього оцінок
 									</h4>
-									<p className="my-1 text-center font-medium">
+									<p className="my-1 text-center">
 										{topProduct.ratingsCount || 0}
 									</p>
 								</div>
 								<div>
 									<h4 className="text-gray-400 text-sm font-normal">
-										Times rated highest
+										Кількість найвищих оцінок
 									</h4>
-									<p className="my-1 text-center font-medium">
+									<p className="my-1 text-center">
 										{topProduct.maxRatingCount || 0}
 									</p>
 								</div>

@@ -59,11 +59,11 @@ function Categories({ swal }) {
 	const deleteCategory = (category) => {
 		swal
 			.fire({
-				title: "Are you sure?",
-				text: `Do you want to delete ${category.name}?`,
+				title: "Ви впевнені?",
+				text: `Ви дійсно хочете видалити ${category.name}?`,
 				showCancelButton: true,
-				cancelButtonText: "Cancel",
-				confirmButtonText: "Yes, Delete!",
+				cancelButtonText: "Відмінити",
+				confirmButtonText: "Так, Видалити!",
 				confirmButtonColor: "#d55",
 				reverseButtons: true,
 			})
@@ -107,25 +107,25 @@ function Categories({ swal }) {
 
 	return (
 		<Layout>
-			<h1>Categories</h1>
+			<h1>Категорії</h1>
 			<label>
 				{editedCategory
-					? `Edit category ${editedCategory.name}`
-					: "New category name"}
+					? `Редагувати категорію ${editedCategory.name}`
+					: "Назва нової категорії"}
 			</label>
 			<form onSubmit={saveCategory}>
 				<div className="flex gap-1 mb-2">
 					<input
 						className="mb-0"
 						type="text"
-						placeholder="Category name"
+						placeholder="Назва категорії"
 						value={name}
 						onChange={(ev) => setName(ev.target.value)}
 					/>
 					<select
 						value={parentCategory}
 						onChange={(ev) => setParentCategory(ev.target.value)}>
-						<option value={undefined}>No parent category</option>
+						<option value={undefined}>Немає батьківської категорії</option>
 						{categories.length > 0 &&
 							categories.map((category) => (
 								<option key={category._id} value={category._id}>
@@ -135,19 +135,19 @@ function Categories({ swal }) {
 					</select>
 				</div>
 				<div className="mb-2">
-					<label className="block">Properties</label>
+					<label className="block">Властивості</label>
 					<button
 						type="button"
 						onClick={addProperty}
 						className="btn-default text-sm">
-						Add new property
+						Додати нову властивість
 					</button>
 					{properties.length > 0 &&
 						properties.map((property, index) => (
 							<div className="flex gap-1 mt-2" key={index}>
 								<input
 									type="text"
-									placeholder="property name (example: color)"
+									placeholder="назва властивості (наприклад: колір)"
 									value={property.name}
 									onChange={(ev) =>
 										handlePropertyNameChange(index, property, ev.target.value)
@@ -155,7 +155,7 @@ function Categories({ swal }) {
 								/>
 								<input
 									type="text"
-									placeholder="values, comma separated"
+									placeholder="значення, через кому (наприклад: червоний,синій)"
 									value={property.values}
 									onChange={(ev) =>
 										handlePropertyValuesChange(index, property, ev.target.value)
@@ -193,11 +193,11 @@ function Categories({ swal }) {
 								setParentCategory("");
 								setProperties([]);
 							}}>
-							Cancel
+							Відмінити
 						</button>
 					)}
 					<button type="submit" className="btn-primary py-1">
-						Save
+						Зберегти
 					</button>
 				</div>
 			</form>
@@ -205,8 +205,8 @@ function Categories({ swal }) {
 				<table className="basic mt-4">
 					<thead>
 						<tr>
-							<td>Category name</td>
-							<td>Parent category</td>
+							<td>Назва категорії</td>
+							<td>Батьківська категорія</td>
 							<td></td>
 						</tr>
 					</thead>
@@ -235,7 +235,7 @@ function Categories({ swal }) {
 														d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
 													/>
 												</svg>
-												Edit
+												Редагувати
 											</button>
 											<button
 												className="btn-red inline-flex items-center"
@@ -254,7 +254,7 @@ function Categories({ swal }) {
 														d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
 													/>
 												</svg>
-												Delete
+												Видалити
 											</button>
 										</div>
 									</td>

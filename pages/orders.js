@@ -12,14 +12,14 @@ export default function OrdersPage() {
 	}, []);
 	return (
 		<Layout>
-			<h1>Orders</h1>
+			<h1>Замовленя</h1>
 			<table className="basic">
 				<thead>
 					<tr>
-						<th>Date</th>
-						<th>Paid</th>
-						<th>Recipient</th>
-						<th>Products</th>
+						<th>Дата</th>
+						<th>Оплачено</th>
+						<th>Отримувач</th>
+						<th>Товари</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -28,14 +28,14 @@ export default function OrdersPage() {
 							<tr key={order._id}>
 								<td>{new Date(order.createdAt).toLocaleString()}</td>
 								<td className={order.paid ? "text-green-600" : "text-red-600"}>
-									{order.paid ? "YES" : "NO"}
+									{order.paid ? "ТАК" : "НІ"}
 								</td>
 								<td>
 									{order.name} {order.email}
 									<br />
-									{order.city} {order.postalCode} {order.country}
+									{order.city} {order.postal} {order.country}
 									<br />
-									{order.streetAddress}
+									{order.address}
 								</td>
 								<td>
 									{order.line_items.map((l) => (
